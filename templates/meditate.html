@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🧘 Meditation Sessions</h2>
+    <p class="user-status">Status: <strong>{{ user_status }}</strong></p>
+
+    {% if not current_user.is_premium %}
+    <div class="premium-upsell">
+        <h3>✨ Unlock More with Premium</h3>
+        <p>Free members enjoy 2 basic sessions. Upgrade to access 6 exclusive meditations tailored for deeper relaxation and emotional clarity.</p>
+        <a href="{{ url_for('premium.premium') }}" class="btn highlight">Upgrade Now</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="sessions-container">
+    {% for session in sessions %}
+    <div class="card session-card">
+        <h3>{{ session.name }}</h3>
+        <p>{{ session.description }}</p>
+
+        <div class="audio-player">
+            <audio controls {% if not current_user.is_premium and loop.index > 2 %}disabled{% endif %}>
+                <source src="{{ url_for('meditate.serve_audio', filename=session.file) }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+        {% if not current_user.is_premium and loop.index > 2 %}
+        <div class="premium-lock">
+            <p>🔒 Premium content — <a href="{{ url_for('premium.premium') }}">Upgrade to unlock</a></p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card timer-section">
+    <h3>⏱️ Custom Timer</h3>
+    <p id="timer">2:00</p>
+    <button id="timerBtn" class="btn">Start 2-Minute Timer</button>
+</div>
+{% endblock %}

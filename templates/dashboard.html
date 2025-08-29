@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Dashboard</h2>
+    <p>Welcome, <strong>{{ current_user.username }}</strong>!
+        {% if current_user.is_premium %}
+            <span class="badge premium">🎉 Premium Member</span>
+        {% endif %}
+    </p>
+
+    <h3>Your Mood Trends</h3>
+    <canvas id="moodChart"
+            data-dates='{{ dates|tojson }}'
+            data-scores='{{ scores|tojson }}'
+            aria-label="Mood trend chart"
+            role="img">
+    </canvas>
+</div>
+
+<div class="card">
+    <h3>Mood Statistics</h3>
+    <p>Total entries: <strong>{{ total_entries }}</strong></p>
+    <ul class="mood-list">
+        {% for mood, count in mood_counts.items() %}
+            <li><span class="mood-label">{{ mood }}</span>: {{ count }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <h3>Quick Actions</h3>
+    <div class="action-buttons">
+        <a href="{{ url_for('journal.journal') }}" class="btn">📝 Write Journal</a>
+        <a href="{{ url_for('meditate.meditate') }}" class="btn">🧘 Start Meditation</a>
+        {% if not current_user.is_premium %}
+            <a href="{{ url_for('premium.premium') }}" class="btn highlight">🚀 Go Premium</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

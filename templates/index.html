@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card welcome-card">
+    <h1>Welcome to <span class="brand-highlight">Mindful Minutes</span></h1>
+    <p>Your AI-powered micro-meditation companion for emotional wellness</p>
+    <div class="action-buttons" style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <a href="{{ url_for('auth.login') }}" class="btn">🔐 Login</a>
+        <a href="{{ url_for('auth.register') }}" class="btn highlight">📝 Register</a>
+    </div>
+</div>
+
+<div class="card info-card">
+    <h2>What is Mindful Minutes?</h2>
+    <p>Mindful Minutes helps you reflect, recharge, and realign through short journal entries and personalized meditation breaks. It’s built for busy lives and emotional clarity.</p>
+    <p><strongCore features:</strong></p>
+    <ul class="feature-list">
+        <li>🧠 Emotional journaling with AI sentiment analysis</li>
+        <li>🎧 Personalized 2-minute meditation recommendations</li>
+        <li>📊 Mood tracking with interactive visual charts</li>
+        <li>🚀 Premium upgrades for deeper relaxation and insights</li>
+    </ul>
+</div>
+{% endblock %}
