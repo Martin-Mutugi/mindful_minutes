@@ -21,6 +21,7 @@ numpy==2.2.4
 packaging==25.0
 pluggy==1.6.0
 protobuf==4.21.12
+psycopg2-binary==2.9.10
 Pygments==2.19.2
 PyMySQL==1.1.2
 pytest==8.4.1

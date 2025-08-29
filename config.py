@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev')
-    SQLALCHEMY_DATABASE_URI = os.getenv('postgresql://mindful_minutes_user:NN76jsXIcnidBqTU1G5SYnynVtRiHM6Z@dpg-d2osvc95pdvs73cvoi80-a.oregon-postgres.render.com/mindful_minutes')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')  # ✅ Corrected
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Hugging Face API
