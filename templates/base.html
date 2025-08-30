@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mindful Minutes - Your AI-Powered Mental Wellness Companion</title>
-  <meta name="description" content="Track your mood, practice mindfulness, and build emotional resilience with personalized micro-meditations.">
+  <title>Mindful Minutes</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -12,40 +11,26 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <!-- Favicon -->
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
   <header>
-    <nav class="navbar" aria-label="Main navigation">
+    <nav class="navbar">
       <div class="container navbar-content">
-        <a class="brand" href="{{ url_for('dashboard_bp.dashboard') }}">
+        <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
           <i class="fas fa-brain"></i> Mindful Minutes
         </a>
         <div class="nav-links">
           {% if current_user.is_authenticated %}
-            <a href="{{ url_for('journal_bp.journal') }}"><i class="fas fa-pen"></i> Journal</a>
-            <a href="{{ url_for('meditate_bp.meditate') }}"><i class="fas fa-spa"></i> Meditate</a>
-            
-            <!-- Dynamic Premium Link: Status Indicator & CTA -->
-            {% if current_user.is_premium %}
-              <span class="nav-premium-badge">
-                <i class="fas fa-crown"></i> Premium Member
-              </span>
-            {% else %}
-              <a href="{{ url_for('premium_bp.premium') }}" class="nav-upgrade-cta">
-                <i class="fas fa-star"></i> Upgrade
-              </a>
-            {% endif %}
-            
-            <a href="{{ url_for('auth_bp.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="{{ url_for('journal.journal') }}"><i class="fas fa-pen"></i> Journal</a>
+            <a href="{{ url_for('meditate.meditate') }}"><i class="fas fa-spa"></i> Meditate</a>
+            <a href="{{ url_for('premium.premium') }}"><i class="fas fa-star"></i> Premium</a>
+            <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
           {% else %}
-            <a href="{{ url_for('auth_bp.login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
-            <a href="{{ url_for('auth_bp.register') }}"><i class="fas fa-user-plus"></i> Register</a>
+            <a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>  <!-- FIXED: auth.login -->
+            <a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Register</a>  <!-- FIXED: auth.register -->
           {% endif %}
         </div>
-        <button id="darkToggle" class="btn small-btn" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <button id="darkToggle" class="btn small-btn" title="Toggle dark mode">
           <i class="fas fa-moon"></i>
         </button>
       </div>
@@ -71,7 +56,6 @@
 
   <footer class="footer">
     <p>&copy; {{ current_year or 2025 }} Mindful Minutes. Built with care in Nairobi.</p>
-    <p class="small-text">Your mental well-being is our priority. 💚</p>
   </footer>
 
   <!-- Scripts -->
