@@ -3,7 +3,7 @@ body {
   font-family: 'Inter', 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #f0f4f8, #e8f5e9);
+  background-color: #f0f4f8;
   color: #333;
   line-height: 1.6;
   scroll-behavior: smooth;
@@ -60,7 +60,12 @@ img {
 }
 
 .main-grid,
-.dashboard-grid {
+.dashboard-grid,
+.journal-grid,
+.index-grid,
+.auth-grid,
+.meditate-grid,
+.premium-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
@@ -121,6 +126,7 @@ img {
   margin-bottom: 1rem;
   border-radius: 6px;
   font-weight: 500;
+  animation: slideIn 0.5s ease forwards;
 }
 
 .alert-success {
@@ -151,6 +157,9 @@ img {
 #moodChart {
   width: 100%;
   max-height: 300px;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.3s;
 }
 
 /* ===== Mood List ===== */
@@ -195,6 +204,87 @@ img {
   color: #4CAF50;
 }
 
+.spinner i {
+  animation: spin 1s linear infinite;
+}
+
+/* ===== Timer Section ===== */
+.timer-section {
+  text-align: center;
+}
+
+#timer {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+}
+
+/* ===== Auth Forms ===== */
+.auth-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 8px;
+}
+
+.auth-note {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ===== Premium Sections ===== */
+.premium-upsell,
+.premium-status {
+  background-color: #e8f5e8;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border-left: 5px solid #4CAF50;
+}
+
+.premium-lock {
+  background-color: #fff3cd;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-top: 0.75rem;
+  text-align: center;
+  font-weight: 500;
+  color: #856404;
+}
+
+.premium-offer {
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.premium-btn {
+  background-color: #ff6b00;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(255,107,0,0.3);
+}
+
+.premium-btn:hover {
+  background-color: #e55d00;
+  box-shadow: 0 6px 16px rgba(255,107,0,0.4);
+}
+
+.premium-access-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.small-text {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.75rem;
+}
+
 /* ===== Footer ===== */
 .footer {
   text-align: center;
@@ -205,54 +295,7 @@ img {
   border-top: 1px solid #ddd;
 }
 
-/* ===== Dark Mode ===== */
-.dark-mode {
-  background-color: #121212;
-  color: #eee;
-}
-
-.dark-mode .card {
-  background-color: #1e1e1e;
-  box-shadow: 0 4px 12px rgba(255,255,255,0.05);
-}
-
-.dark-mode .navbar {
-  background: linear-gradient(90deg, #2e7d32, #1b5e20);
-}
-
-.dark-mode .footer {
-  background-color: #1e1e1e;
-  color: #ccc;
-  border-top: 1px solid #333;
-}
-
-.dark-mode .btn {
-  background-color: #388e3c;
-}
-
-.dark-mode .btn.highlight {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-}
-
-/* ===== Responsive Tweaks ===== */
-@media (max-width: 768px) {
-  .navbar-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .container {
-    padding: 1rem;
-  }
-
-  .btn {
-    width: 100%;
-    text-align: center;
-  }
-}
 /* ===== Animations ===== */
-
-/* Fade-in for cards */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -264,51 +307,15 @@ img {
   }
 }
 
-.card {
-  animation: fadeInUp 0.6s ease forwards;
-}
-
-/* Button hover pulse */
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.btn:hover {
-  animation: pulse 0.3s ease-in-out;
-}
-
-/* Spinner rotation */
-.spinner i {
-  animation: spin 1s linear infinite;
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Mood chart fade-in */
-#moodChart {
-  opacity: 0;
-  animation: fadeInUp 0.8s ease forwards;
-  animation-delay: 0.3s;
-}
-
-/* Flash message slide-in */
-.alert {
-  animation: slideIn 0.5s ease forwards;
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes slideIn {
@@ -321,3 +328,17 @@ img {
     transform: translateY(0);
   }
 }
+
+.btn:hover {
+  animation: pulse 0.3s ease-in-out;
+}
+
+/* ===== Dark Mode ===== */
+.dark-mode {
+  background-color: #121212;
+  color: #eee;
+}
+
+.dark-mode .card {
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 12px rgba(255,255,255,0
