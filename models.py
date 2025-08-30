@@ -14,16 +14,18 @@ class User(db.Model, UserMixin):
     is_premium = db.Column(db.Boolean, default=False, nullable=False)
     premium_since = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    last_login = db.Column(db.DateTime)  # Track last login for analytics
-    login_count = db.Column(db.Integer, default=0)  # Track engagement
+    
+    # TEMPORARILY REMOVE THESE FIELDS TO FIX DEPLOYMENT:
+    # last_login = db.Column(db.DateTime)  # Track last login for analytics
+    # login_count = db.Column(db.Integer, default=0)  # Track engagement
 
     # Relationships
     journal_entries = db.relationship(
         'JournalEntry',
-        backref='user',  # Changed from 'author' to 'user' for consistency
-        lazy='dynamic',  # Use 'dynamic' for large collections for better performance
+        backref='user',
+        lazy='dynamic',
         cascade='all, delete-orphan',
-        order_by='desc(JournalEntry.created_at)'  # Default ordering
+        order_by='desc(JournalEntry.created_at)'
     )
 
     # Validation
@@ -33,7 +35,7 @@ class User(db.Model, UserMixin):
             raise ValueError("Email cannot be empty")
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             raise ValueError("Invalid email format")
-        return email.lower()  # Store emails in lowercase
+        return email.lower()
 
     @validates('username')
     def validate_username(self, key, username):
@@ -72,7 +74,7 @@ class User(db.Model, UserMixin):
 
     @property
     def name(self):
-        """Get user's display name (username only since no first/last name)"""
+        """Get user's display name"""
         return self.username
 
     def __repr__(self):
@@ -84,9 +86,9 @@ class JournalEntry(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    sentiment_score = db.Column(db.Float)  # 0.0 (negative) to 1.0 (positive)
-    emotion = db.Column(db.String(50))     # e.g., "Positive", "Anxious", "Grateful"
-    emotion_category = db.Column(db.String(20))  # Simplified: 'positive', 'neutral', 'negative'
+    sentiment_score = db.Column(db.Float)
+    emotion = db.Column(db.String(50))
+    emotion_category = db.Column(db.String(20))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), 
                           onupdate=lambda: datetime.now(timezone.utc))
@@ -113,7 +115,7 @@ class JournalEntry(db.Model):
     def validate_content(self, key, content):
         if not content or len(content.strip()) < 10:
             raise ValueError("Journal entry must be at least 10 characters long")
-        if len(content) > 10000:  # Reasonable limit
+        if len(content) > 10000:
             raise ValueError("Journal entry is too long")
         return content.strip()
 
