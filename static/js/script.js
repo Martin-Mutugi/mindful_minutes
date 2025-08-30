@@ -4,77 +4,95 @@ document.addEventListener('DOMContentLoaded', () => {
   if (darkToggle) {
     darkToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
+      darkToggle.classList.toggle('active');
     });
   }
 
-  // ⏳ Journal Form Spinner
-  const journalForm = document.querySelector('.journal-form');
+  // ⏳ Global Spinner Hide on Load
   const loadingSpinner = document.getElementById('loadingSpinner');
+  window.addEventListener('load', () => {
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+  });
+
+  // 🧠 Journal Form Spinner
+  const journalForm = document.querySelector('.journal-form');
   if (journalForm && loadingSpinner) {
     journalForm.addEventListener('submit', () => {
       loadingSpinner.style.display = 'block';
+      setTimeout(() => {
+        loadingSpinner.style.display = 'none';
+      }, 5000); // fallback in case response fails
     });
   }
 
   // 📊 Mood Chart
   const chartEl = document.getElementById('moodChart');
   if (chartEl) {
-    const dates = JSON.parse(chartEl.getAttribute('data-dates'));
-    const scores = JSON.parse(chartEl.getAttribute('data-scores'));
+    try {
+      const dates = JSON.parse(chartEl.getAttribute('data-dates'));
+      const scores = JSON.parse(chartEl.getAttribute('data-scores'));
 
-    new Chart(chartEl, {
-      type: 'line',
-      data: {
-        labels: dates,
-        datasets: [{
-          label: 'Mood Score',
-          data: scores,
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.1)',
-          pointBackgroundColor: '#388E3C',
-          pointRadius: 4,
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: {
-              color: '#333',
-              font: { size: 14, weight: 'bold' }
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: ctx => `Score: ${ctx.parsed.y.toFixed(2)}`
-            }
-          }
+      new Chart(chartEl, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: 'Mood Score',
+            data: scores,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            pointBackgroundColor: '#388E3C',
+            pointRadius: 4,
+            fill: true,
+            tension: 0.3
+          }]
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 1,
-            ticks: { stepSize: 0.1 },
-            title: {
-              display: true,
-              text: 'Mood Score',
-              color: '#333',
-              font: { size: 14 }
+        options: {
+          responsive: true,
+          animation: {
+            duration: 800,
+            easing: 'easeOutQuart'
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#333',
+                font: { size: 14, weight: 'bold' }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => `Score: ${ctx.parsed.y.toFixed(2)}`
+              }
             }
           },
-          x: {
-            title: {
-              display: true,
-              text: 'Date',
-              color: '#333',
-              font: { size: 14 }
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 1,
+              ticks: { stepSize: 0.1 },
+              title: {
+                display: true,
+                text: 'Mood Score',
+                color: '#333',
+                font: { size: 14 }
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Date',
+                color: '#333',
+                font: { size: 14 }
+              }
             }
           }
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.error("Chart rendering failed:", err);
+      chartEl.style.display = 'none';
+    }
   }
 
   // ⏱️ Meditation Timer
