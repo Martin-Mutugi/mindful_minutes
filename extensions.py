@@ -90,9 +90,6 @@ def configure_rate_limiting(app):
     """
     Configure rate limiting rules and exemptions.
     """
-    # Exclude static files and health checks from rate limiting
-    limiter.exempt("static")
-    
     # Health check endpoint should have higher limits
     @limiter.limit("10 per minute")
     def health_check_limit():
