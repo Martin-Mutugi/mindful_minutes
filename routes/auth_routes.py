@@ -6,6 +6,9 @@ from extensions import db
 
 auth_bp = Blueprint('auth', __name__)
 
+# -------------------
+# Login Route
+# -------------------
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -15,23 +18,40 @@ def login():
 
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
+            flash('Login successful! Welcome back 👋', 'success')
             return redirect(url_for('dashboard.dashboard'))
         else:
-            flash('Invalid credentials', 'danger')
+            flash('Invalid email or password.', 'danger')
 
     return render_template('login.html')
 
+# -------------------
+# Register Route
+# -------------------
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
+        username = request.form.get('username').strip()
+        email = request.form.get('email').strip().lower()
         password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
 
-        if User.query.filter_by(email=email).first():
-            flash('Email already exists', 'warning')
+        # Check password confirmation
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
             return redirect(url_for('auth.register'))
 
+        # Check duplicate email
+        if User.query.filter_by(email=email).first():
+            flash('Email already exists. Please use another one.', 'warning')
+            return redirect(url_for('auth.register'))
+
+        # Check duplicate username
+        if User.query.filter_by(username=username).first():
+            flash('Username already taken. Try another.', 'warning')
+            return redirect(url_for('auth.register'))
+
+        # Create new user
         new_user = User(
             username=username,
             email=email,
@@ -42,10 +62,14 @@ def register():
         db.session.commit()
 
         login_user(new_user)
+        flash('Account created successfully 🎉', 'success')
         return redirect(url_for('dashboard.dashboard'))
 
     return render_template('register.html')
 
+# -------------------
+# Logout Route
+# -------------------
 @auth_bp.route('/logout')
 @login_required
 def logout():
