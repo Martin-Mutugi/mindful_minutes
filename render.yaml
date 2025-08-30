@@ -5,18 +5,21 @@ services:
     region: oregon
     plan: free
     
-    # Updated build command
+    # Updated build command with database migration
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
+      flask db upgrade  # Add database migration here
     
     # Enhanced start command
     startCommand: gunicorn --workers=2 --threads=4 --timeout=120 --access-logfile=- --bind=0.0.0.0:$PORT app:app
     
-    # Environment variables
+    # Environment variables - ADD FLASK_APP
     envVars:
       - key: FLASK_ENV
         value: production
+      - key: FLASK_APP
+        value: app.py  # This is crucial for flask commands to work
       - key: PYTHON_VERSION
         value: 3.11.8
       - key: DATABASE_URL
@@ -27,3 +30,12 @@ services:
     healthCheckPath: /healthz
     branch: main
     autoDeploy: true
+
+  # Add your database service if not already defined
+  - type: postgres
+    name: mindful-minutes-db
+    region: oregon
+    plan: free
+    ipAllowList: []
+    databaseName: mindful_minutes
+    user: mindful_minutes_user

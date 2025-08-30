@@ -28,7 +28,6 @@ def create_app(config_class=None):
     configure_logging(app)
     
     # Middleware for proxy setups (Heroku, Render, etc.)
-    # Use more conservative settings for Render
     app.wsgi_app = ProxyFix(
         app.wsgi_app, 
         x_for=1, 
@@ -58,10 +57,13 @@ def create_app(config_class=None):
     # Create database tables (only in development)
     with app.app_context():
         if app.config.get('FLASK_ENV') == 'development':
-            db.create_all()
-            app.logger.info("Database tables created/verified")
+            try:
+                db.create_all()
+                app.logger.info("Database tables created/verified")
+            except Exception as e:
+                app.logger.warning(f"db.create_all() failed: {e}")
         else:
-            app.logger.info("Skipping automatic db.create_all() in production")
+            app.logger.info("Skipping automatic db.create_all() in production - using migrations instead")
     
     return app
 
@@ -86,8 +88,6 @@ def configure_logging(app):
         format=log_format,
         handlers=[
             logging.StreamHandler(),
-            # Add FileHandler for production if needed
-            # logging.FileHandler('app.log') if app.config.get('FLASK_ENV') == 'production' else logging.StreamHandler()
         ]
     )
     
@@ -206,9 +206,7 @@ def register_commands(app):
                 username='admin',
                 email='admin@mindfulminutes.com',
                 password_hash=generate_password_hash('admin123'),
-                is_premium=True,
-                first_name='Admin',
-                last_name='User'
+                is_premium=True
             )
             db.session.add(admin)
             db.session.commit()
@@ -226,6 +224,47 @@ def register_commands(app):
             app.logger.info("Database migrations completed successfully")
         except Exception as e:
             app.logger.error(f"Database migration failed: {e}")
+            # Provide helpful error message for common migration issues
+            if "column" in str(e).lower() and "does not exist" in str(e).lower():
+                app.logger.error("This is likely due to a missing column. Check your models match the database.")
+    
+    @app.cli.command('check-db')
+    def check_database():
+        """Check database connection and schema"""
+        try:
+            # Test connection
+            db.session.execute('SELECT 1')
+            app.logger.info("✓ Database connection successful")
+            
+            # Check if emotion_category column exists
+            result = db.session.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='journal_entries' 
+                AND column_name='emotion_category'
+            """)
+            
+            if result.fetchone():
+                app.logger.info("✓ emotion_category column exists")
+            else:
+                app.logger.warning("✗ emotion_category column missing - run migrations")
+                
+            # Check all tables exist
+            result = db.session.execute("""
+                SELECT table_name 
+                FROM information_schema.tables 
+                WHERE table_schema = 'public'
+                AND table_name IN ('users', 'journal_entries')
+            """)
+            
+            tables = [row[0] for row in result.fetchall()]
+            if 'users' in tables and 'journal_entries' in tables:
+                app.logger.info("✓ All required tables exist")
+            else:
+                app.logger.warning(f"Missing tables. Found: {tables}")
+                
+        except Exception as e:
+            app.logger.error(f"Database check failed: {e}")
 
 
 def register_routes(app):
@@ -237,12 +276,17 @@ def register_routes(app):
         try:
             # Test database connection
             db.session.execute('SELECT 1')
+            
+            # Check if we can query basic data
+            user_count = db.session.query(User).count()
+            
             return jsonify({
                 'status': 'healthy',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'version': app.config.get('APP_VERSION', '1.0.0'),
                 'environment': app.config.get('FLASK_ENV', 'production'),
-                'database': 'connected'
+                'database': 'connected',
+                'user_count': user_count
             }), 200
         except Exception as e:
             app.logger.error(f"Health check failed: {e}")

@@ -1,70 +1,73 @@
-{% extends "base.html" %}
+from flask import Blueprint, render_template
+from flask_login import current_user, login_required
+from models import JournalEntry
+from datetime import datetime, timedelta
+from collections import defaultdict
+import json
+from extensions import db  # Add this import
 
-{% block content %}
-<div class="dashboard-header">
-    <h1>Welcome back, {{ current_user.name | default('Friend', true) }}!</h1>
-    <p class="subtitle">Here's your mindfulness journey at a glance.</p>
-</div>
+dashboard_bp = Blueprint('dashboard_bp', __name__)
 
-<div class="dashboard-grid">
-    <!-- Quick Stats Section -->
-    <section class="dashboard-card">
-        <h2><i class="fas fa-chart-pie"></i> Quick Stats</h2>
-        <div class="stats-grid">
-            <div class="stat-box">
-                <span class="stat-number">{{ entry_count }}</span>
-                <span class="stat-label">Journal Entries</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-number">{{ recent_entries }}</span>
-                <span class="stat-label">Last 7 Days</span>
-            </div>
-            <!-- Add more stat boxes as needed -->
-        </div>
-    </section>
+@dashboard_bp.route('/dashboard')
+@login_required
+def dashboard():
+    """
+    Fetches the user's journal entries and prepares data for the dashboard.
+    Efficiently handles data for the Chart.js graph and stats.
+    """
+    # Calculate the date for one week ago
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    
+    # FIXED: Explicitly select only existing columns
+    all_entries = db.session.query(
+        JournalEntry.id,
+        JournalEntry.content,
+        JournalEntry.sentiment_score,
+        JournalEntry.emotion,
+        JournalEntry.created_at,
+        JournalEntry.updated_at,
+        JournalEntry.user_id
+    ).filter_by(
+        user_id=current_user.id
+    ).order_by(
+        JournalEntry.created_at.asc()
+    ).all()
 
-    <!-- Mood Chart Section -->
-    <section class="dashboard-card chart-card">
-        <h2><i class="fas fa-line-chart"></i> Your Mood Trend</h2>
-        <p class="text-muted">Tracking your sentiment scores over time.</p>
+    # FIXED: Also fix the recent entries query
+    recent_entries = db.session.query(
+        JournalEntry.id,
+        JournalEntry.content,
+        JournalEntry.sentiment_score,
+        JournalEntry.emotion,
+        JournalEntry.created_at,
+        JournalEntry.updated_at,
+        JournalEntry.user_id
+    ).filter(
+        JournalEntry.user_id == current_user.id,
+        JournalEntry.created_at >= seven_days_ago
+    ).all()
 
-        {% if entry_count > 0 %}
-            <div class="chart-container">
-                <!-- Canvas for Chart.js with data passed from Flask -->
-                <canvas id="moodChart" 
-                        data-dates="{{ dates | safe }}" 
-                        data-scores="{{ scores | safe }}">
-                </canvas>
-            </div>
-        {% else %}
-            <!-- Graceful fallback for no data -->
-            <div class="empty-state">
-                <i class="fas fa-chart-line fa-3x"></i>
-                <h3>No Data Yet</h3>
-                <p>Your mood chart will appear here after you write your first journal entry.</p>
-                <a href="{{ url_for('journal.journal') }}" class="btn primary-btn">
-                    <i class="fas fa-pen"></i> Write Your First Entry
-                </a>
-            </div>
-        {% endif %}
-    </section>
+    # Prepare data for the Chart.js graph
+    dates = [entry.created_at.strftime('%b %d') for entry in all_entries]
+    scores = [float(entry.sentiment_score) for entry in all_entries if entry.sentiment_score is not None]
 
-    <!-- Recent Entries or Action Buttons -->
-    <section class="dashboard-card">
-        <h2><i class="fas fa-history"></i> Quick Actions</h2>
-        <div class="action-buttons">
-            <a href="{{ url_for('journal.journal') }}" class="btn primary-btn">
-                <i class="fas fa-pen"></i> New Journal Entry
-            </a>
-            <a href="{{ url_for('meditate.meditate') }}" class="btn secondary-btn">
-                <i class="fas fa-spa"></i> Start a Meditation
-            </a>
-            {% if not current_user.is_premium %}
-            <a href="{{ url_for('premium.premium') }}" class="btn premium-btn">
-                <i class="fas fa-crown"></i> Unlock Premium
-            </a>
-            {% endif %}
-        </div>
-    </section>
-</div>
-{% endblock %}
+    # Prepare data for the mood statistics
+    mood_counts = defaultdict(int)
+    for entry in recent_entries:
+        if entry.emotion:  # Add null check
+            mood_counts[entry.emotion] += 1
+
+    total_entries = len(all_entries)
+
+    # Convert lists to JSON strings for safe embedding
+    dates_json = json.dumps(dates)
+    scores_json = json.dumps(scores)
+
+    return render_template(
+        'dashboard.html',
+        dates=dates_json,
+        scores=scores_json,
+        mood_counts=dict(mood_counts),
+        entry_count=total_entries,
+        recent_entries=len(recent_entries)
+    )
