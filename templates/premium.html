@@ -1,139 +1,101 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card premium-container">
-    <h2 class="title">🌟 Premium Membership</h2>
+<section class="premium-grid">
+  <div class="card premium-card">
+    <h2 class="title"><i class="fas fa-star"></i> Premium Membership</h2>
 
     {% if current_user.is_premium %}
     <div class="premium-status">
-        <h3>🎉 You're a Premium Member!</h3>
-        <p>
-            Thank you for supporting <strong>Mindful Minutes</strong>.<br>
-            {% if current_user.premium_since %}
-                Subscription started on <strong>{{ current_user.premium_since.strftime('%Y-%m-%d') }}</strong>.
-            {% else %}
-                Your subscription is active 🎉
-            {% endif %}
-        </p>
+      <h3><i class="fas fa-crown"></i> You're a Premium Member!</h3>
+      <p>
+        Thank you for supporting <strong>Mindful Minutes</strong>.<br>
+        {% if current_user.premium_since %}
+          Subscription started on <strong>{{ current_user.premium_since.strftime('%Y-%m-%d') }}</strong>.
+        {% else %}
+          Your subscription is active 🎉
+        {% endif %}
+      </p>
 
-        <h4>Your Premium Benefits:</h4>
-        <ul class="benefits-list">
-            {% for feature in premium_features %}
-                <li>✅ {{ feature }}</li>
-            {% endfor %}
-        </ul>
+      <h4>Your Premium Benefits:</h4>
+      <ul class="benefits-list">
+        {% for feature in premium_features %}
+          <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
+        {% endfor %}
+      </ul>
 
-        <a href="{{ url_for('meditate.meditate') }}" class="btn premium-access-btn">🎧 Start Premium Meditation</a>
+      <a href="{{ url_for('meditate.meditate') }}" class="btn premium-access-btn">
+        <i class="fas fa-headphones"></i> Start Premium Meditation
+      </a>
     </div>
 
     {% else %}
     <div class="premium-offer">
-        <h3>✨ Upgrade to Premium</h3>
-        <p>Compare what’s included in Free vs Premium:</p>
+      <h3><i class="fas fa-gem"></i> Upgrade to Premium</h3>
+      <p>Compare what’s included in Free vs Premium:</p>
 
-        <div class="feature-comparison">
-            <div class="free-features">
-                <h4>Free Plan</h4>
-                <ul>
-                    {% for feature in free_features %}
-                        <li>🔹 {{ feature }}</li>
-                    {% endfor %}
-                    <li>🎧 Basic Meditations (Gratitude, Breathing, Focus)</li>
-                </ul>
-            </div>
+      <div class="feature-comparison">
+        <div class="free-features">
+          <h4>Free Plan</h4>
+          <ul>
+            {% for feature in free_features %}
+              <li><i class="fas fa-minus-circle"></i> {{ feature }}</li>
+            {% endfor %}
+            <li><i class="fas fa-headphones"></i> Basic Meditations (Gratitude, Bre.<br>
+        {% if current_user.premium_since %}
+          Subscription started on <strong>{{ current_user.premium_since.strftime('%Y-%m-%d') }}</strong>.
+        {% else %}
+          Your subscription is active 🎉
+        {% endif %}
+      </p>
 
-            <div class="premium-features">
-                <h4>Premium Plan</h4>
-                <ul>
-                    {% for feature in premium_features %}
-                        <li>🌟 {{ feature }}</li>
-                    {% endfor %}
-                    <li>🎶 Exclusive Meditations (Deep Sleep, Stress Relief, Morning Energy)</li>
-                </ul>
-            </div>
+      <h4>Your Premium Benefits:</h4>
+      <ul class="benefits-list">
+        {% for feature in premium_features %}
+          <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
+        {% endfor %}
+      </ul>
+
+      <a href="{{ url_for('meditate.meditate') }}" class="btn premium-access-btn">
+        <i class="fas fa-headphones"></i> Start Premium Meditation
+      </a>
+    </div>
+
+    {% else %}
+    <div class="premium-offer">
+      <h3><i class="fas fa-gem"></i> Upgrade to Premium</h3>
+      <p>Compare what’s included in Free vs Premium:</p>
+
+      <div class="feature-comparison">
+        <div class="free-features">
+          <h4>Free Plan</h4>
+         athing, Focus)</li>
+          </ul>
         </div>
 
-        <div class="pricing">
-            <h4>Only $5/month</h4>
-            <form method="POST" action="{{ url_for('premium.initiate_payment') }}">
-                <input type="hidden" name="amount" value="5.00">
-                <button type="submit" class="btn premium-btn">🚀 Upgrade to Premium</button>
-            </form>
-            <p class="small-text">💳 Secure payment powered by IntaSend. Cancel anytime.</p>
+        <div class="premium-features">
+          <h4>Premium Plan</h4>
+          <ul>
+            {% for feature in premium_features %}
+              <li><i class="fas fa-star"></i> {{ feature }}</li>
+            {% endfor %}
+            <li><i class="fas fa-music"></i> Exclusive Meditations (Deep Sleep, Stress Relief, Morning Energy)</li>
+          </ul>
         </div>
+      </div>
+
+      <div class="pricing">
+        <h4><i class="fas fa-dollar-sign"></i> Only $5/month</h4>
+        <form method="POST" action="{{ url_for('premium.initiate_payment') }}">
+          <input type="hidden" name="amount" value="5.00">
+          <button type="submit" class="btn premium-btn">
+            <i class="fas fa-rocket"></i> Upgrade to Premium
+          </button>
+        </form>
+        <p class="small-text"><i class="fas fa-shield-alt"></i> Secure payment powered by IntaSend. Cancel anytime.</p>
+      </div>
     </div>
     {% endif %}
-</div>
-
-<style>
-.premium-container {
-    padding: 20px;
-    max-width: 850px;
-    margin: auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.title {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.feature-comparison {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-    gap: 20px;
-}
-.feature-comparison div {
-    width: 48%;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-}
-.free-features h4 {
-    color: #555;
-}
-.premium-features h4 {
-    color: #d4af37;
-}
-.free-features ul, .premium-features ul {
-    list-style: none;
-    padding: 0;
-}
-.free-features li, .premium-features li {
-    margin: 8px 0;
-    font-size: 15px;
-}
-.benefits-list {
-    list-style: none;
-    padding-left: 0;
-}
-.benefits-list li {
-    margin: 6px 0;
-}
-.btn {
-    padding: 12px 25px;
-    border-radius: 8px;
-    display: inline-block;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
-}
-.premium-btn {
-    background: linear-gradient(135deg, #4CAF50, #2E7D32);
-    color: white;
-}
-.premium-btn:hover {
-    background: linear-gradient(135deg, #66BB6A, #388E3C);
-}
-.premium-access-btn {
-    background: #2196F3;
-    color: white;
-}
-.small-text {
-    font-size: 13px;
-    color: #777;
-    margin-top: 10px;
-}
-</style>
+  </div>
+</section>
 {% endblock %}

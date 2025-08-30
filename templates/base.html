@@ -1,50 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mindful Minutes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mindful Minutes</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="container">
-                <a class="brand" href="{{ url_for('dashboard.dashboard') }}">Mindful Minutes</a>
-                <div class="nav-links">
-                    {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('journal.journal') }}">Journal</a>
-                        <a href="{{ url_for('meditate.meditate') }}">Meditate</a>
-                        <a href="{{ url_for('premium.premium') }}">Premium</a>
-                        <a href="{{ url_for('auth.logout') }}">Logout</a>
-                    {% else %}
-                        <a href="{{ url_for('auth.login') }}">Login</a>
-                        <a href="{{ url_for('auth.register') }}">Register</a>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <main class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; {{ current_year or 2025 }} Mindful Minutes. Built with care in Nairobi.</p>
+  <header>
+    <nav class="navbar">
+      <div class="nav-grid">
+        <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
+          <i class="fas fa-brain"></i> Mindful Minutes
+        </a>
+        <div class="nav-links">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('journal.journal') }}"><i class="fas fa-pen"></i> Journal</a>
+            <a href="{{ url_for('meditate.meditate') }}"><i class="fas fa-spa"></i> Meditate</a>
+            <a href="{{ url_for('premium.premium') }}"><i class="fas fa-star"></i> Premium</a>
+            <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Register</a>
+          {% endif %}
         </div>
-    </footer>
+        <button id="darkToggle" class="btn small-btn"><i class="fas fa-moon"></i></button>
+      </div>
+    </nav>
+  </header>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <main class="main-grid">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Optional loading spinner -->
+    <div id="loadingSpinner" style="display:none;" class="spinner">
+      <i class="fas fa-circle-notch fa-spin"></i> Loading...
+    </div>
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <p>&copy; {{ current_year or 2025 }} Mindful Minutes. Built with care in Nairobi.</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

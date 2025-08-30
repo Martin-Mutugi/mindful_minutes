@@ -1,29 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card">
-    <h2>Journal</h2>
+<section class="journal-grid">
+  <!-- Journal Form -->
+  <div class="card journal-card">
+    <h2><i class="fas fa-pen"></i> Journal</h2>
     <form method="POST" class="journal-form">
-        <div class="form-group">
-            <label for="content">How are you feeling today?</label>
-            <textarea id="content" name="content" rows="5" required placeholder="Write your thoughts here..."></textarea>
-        </div>
-        <button type="submit" class="btn">🧠 Analyze Mood</button>
+      <div class="form-group">
+        <label for="content">How are you feeling today?</label>
+        <textarea id="content" name="content" rows="5" required placeholder="Write your thoughts here..."></textarea>
+      </div>
+      <button type="submit" class="btn"><i class="fas fa-brain"></i> Analyze Mood</button>
     </form>
-</div>
+  </div>
 
-<div class="card">
-    <h3>Previous Entries</h3>
+  <!-- Previous Entries -->
+  <div class="card entries-card">
+    <h3><i class="fas fa-history"></i> Previous Entries</h3>
     {% if entries %}
+      <div class="entries-list">
         {% for entry in entries %}
-            <div class="entry">
-                <p><strong>{{ entry.created_at.strftime('%Y-%m-%d') }}</strong></p>
-                <p>{{ entry.content }}</p>
-                <p>Mood: <span class="mood-tag">{{ entry.emotion }}</span> (Score: {{ "%.2f"|format(entry.sentiment_score) }})</p>
-            </div>
+          <div class="entry-card">
+            <p class="entry-date"><i class="fas fa-calendar-day"></i> {{ entry.created_at.strftime('%Y-%m-%d') }}</p>
+            <p class="entry-text">{{ entry.content }}</p>
+            <p class="entry-mood">
+              <i class="fas fa-smile"></i> Mood: 
+              <span class="mood-tag">{{ entry.emotion }}</span> 
+              <span class="score">({{ "%.2f"|format(entry.sentiment_score) }})</span>
+            </p>
+          </div>
         {% endfor %}
+      </div>
     {% else %}
-        <p>No entries yet. Start journaling to track your emotional journey.</p>
+      <p>No entries yet. Start journaling to track your emotional journey.</p>
     {% endif %}
-</div>
+  </div>
+</section>
 {% endblock %}
