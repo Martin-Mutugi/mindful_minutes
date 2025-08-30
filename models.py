@@ -11,8 +11,6 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
-    first_name = db.Column(db.String(50))  # Added for personalization
-    last_name = db.Column(db.String(50))   # Added for personalization
     is_premium = db.Column(db.Boolean, default=False, nullable=False)
     premium_since = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -66,8 +64,6 @@ class User(db.Model, UserMixin):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
             'is_premium': self.is_premium,
             'premium_since': self.premium_since.isoformat() if self.premium_since else None,
             'created_at': self.created_at.isoformat(),
@@ -76,13 +72,8 @@ class User(db.Model, UserMixin):
 
     @property
     def name(self):
-        """Get user's display name (first name + last name or username)"""
-        if self.first_name and self.last_name:
-            return f"{self.first_name} {self.last_name}"
-        elif self.first_name:
-            return self.first_name
-        else:
-            return self.username
+        """Get user's display name (username only since no first/last name)"""
+        return self.username
 
     def __repr__(self):
         return f"<User {self.username} ({self.email})>"
