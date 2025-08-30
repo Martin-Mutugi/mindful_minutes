@@ -6,7 +6,6 @@ from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_mail import Mail
-from models import User  # ← ADD THIS IMPORT
 
 # Database ORM
 db = SQLAlchemy()
@@ -21,10 +20,11 @@ login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 login_manager.session_protection = 'strong'
 
-# User loader function - REQUIRED for Flask-Login
-@login_manager.user_loader  # ← ADD THIS FUNCTION
+# User loader function - Import inside function to avoid circular imports
+@login_manager.user_loader
 def load_user(user_id):
     """Load user from database by ID."""
+    from models import User  # Import here to avoid circular import
     try:
         return db.session.get(User, int(user_id))
     except (ValueError, TypeError):
