@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="fas fa-lock fa-5x"></i>
+        </div>
+        <h1>403 - Access Forbidden</h1>
+        <p class="error-message">This area requires special access. It seems you don't have the necessary permissions.</p>
+        <p class="error-submessage">If you believe this is a mistake, please contact support.</p>
+        
+        <div class="error-actions">
+            <a href="{{ url_for('main_bp.landing') }}" class="btn primary-btn">
+                <i class="fas fa-home"></i> Return Home
+            </a>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth_bp.login') }}" class="btn secondary-btn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </a>
+            {% else %}
+            <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn secondary-btn">
+                <i class="fas fa-brain"></i> Your Dashboard
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="error-tip">
+            <i class="fas fa-lightbulb"></i>
+            <strong>Mindfulness Tip:</strong> Setting boundaries is healthy - both in life and in digital spaces.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-icon {
+    color: #ffa502; /* Amber color for permission errors */
+}
+</style>
+{% endblock %}

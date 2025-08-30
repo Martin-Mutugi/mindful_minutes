@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="fas fa-cogs fa-5x"></i>
+        </div>
+        <h1>500 - Internal Server Error</h1>
+        <p class="error-message">Something unexpected happened on our end. Our team has been notified.</p>
+        <p class="error-submessage">Please try again in a few moments while we find our center.</p>
+        
+        <div class="error-actions">
+            <a href="{{ url_for('main_bp.landing') }}" class="btn primary-btn">
+                <i class="fas fa-home"></i> Return Home
+            </a>
+            <button onclick="window.location.reload()" class="btn secondary-btn">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+        </div>
+
+        <div class="error-tip">
+            <i class="fas fa-lightbulb"></i>
+            <strong>Mindfulness Tip:</strong> Technical difficulties are like passing clouds - they come and go. 
+            This too shall pass.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Uses same styles as 404.html */
+.error-icon {
+    color: #ff4757; /* Different color for server errors */
+}
+</style>
+{% endblock %}

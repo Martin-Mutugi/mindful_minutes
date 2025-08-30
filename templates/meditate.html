@@ -1,49 +1,165 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="meditate-header">
+    <h1><i class="fas fa-spa"></i> Find Your Center</h1>
+    <p class="subtitle">Select a guided meditation or start a mindful timer.</p>
+</div>
+
 <section class="meditate-grid">
-  <!-- Header + Upsell -->
-  <div class="card">
-    <h2><i class="fas fa-spa"></i> Meditation Sessions</h2>
-    <p class="user-status">Status: <strong>{{ user_status }}</strong></p>
+    <!-- User Status & Recommendation -->
+    <div class="card status-card">
+        <div class="user-status">
+            <span class="status-label">Your Plan:</span>
+            <span class="status-badge {{ 'premium' if is_premium else 'free' }}">
+                <i class="fas fa-{{ 'crown' if is_premium else 'user' }}"></i> {{ user_status }}
+            </span>
+        </div>
 
-    {% if not current_user.is_premium %}
-    <div class="premium-upsell">
-      <h3><i class="fas fa-star"></i> Unlock More with Premium</h3>
-      <p>Free members enjoy 2 basic sessions. Upgrade to access 6 exclusive meditations tailored for deeper relaxation and emotional clarity.</p>
-      <a href="{{ url_for('premium.premium') }}" class="btn highlight"><i class="fas fa-rocket"></i> Upgrade Now</a>
+        {% if recommended_session %}
+            {% set rec_session = sessions|selectattr("id", "equalto", recommended_session)|first %}
+            {% if rec_session %}
+            <div class="recommendation">
+                <p><i class="fas fa-lightbulb"></i> <strong>For you:</strong> Based on your recent journal, we recommend:</p>
+                <div class="recommended-session">
+                    <h4>{{ rec_session.name }}</h4>
+                    <p>{{ rec_session.description }}</p>
+                    <a href="#session-{{ rec_session.id }}" class="btn primary-btn small-btn">
+                        <i class="fas fa-play"></i> Try This Session
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        {% if not is_premium %}
+        <div class="premium-upsell">
+            <h3><i class="fas fa-star"></i> Deepen Your Practice</h3>
+            <p>Unlock <strong>6 additional sessions</strong> designed for specific needs like sleep, anxiety, and morning energy.</p>
+            <a href="{{ url_for('premium_bp.premium') }}" class="btn highlight">
+                <i class="fas fa-gem"></i> Upgrade to Premium
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-  </div>
 
-  <!-- Sessions -->
-  <div class="sessions-container">
-    {% for session in sessions %}
-    <div class="card session-card">
-      <h3><i class="fas fa-headphones"></i> {{ session.name }}</h3>
-      <p>{{ session.description }}</p>
+    <!-- Sessions Grid -->
+    <div class="sessions-container">
+        <h2>Guided Sessions</h2>
+        <div class="sessions-grid">
+            {% for session in sessions %}
+            <div class="card session-card" id="session-{{ session.id }}">
+                <div class="session-header">
+                    <h3><i class="fas fa-headphones"></i> {{ session.name }}</h3>
+                    {% if session.id in ['gratitude', 'relaxation', 'stress_relief', 'sleep', 'anxiety_relief', 'morning_energy'] and not is_premium %}
+                    <span class="premium-tag">Premium</span>
+                    {% endif %}
+                </div>
+                <p class="session-desc">{{ session.description }}</p>
 
-      <div class="audio-player">
-        <audio controls {% if not current_user.is_premium and loop.index > 2 %}disabled{% endif %}>
-          <source src="{{ url_for('meditate.serve_audio', filename=session.file) }}" type="audio/mpeg">
-          Your browser does not support the audio element.
-        </audio>
-      </div>
+                <div class="audio-player">
+                    <audio id="player-{{ session.id }}" controlsList="nodownload" {% if not is_premium and session.id in ['gratitude', 'relaxation', 'stress_relief', 'sleep', 'anxiety_relief', 'morning_energy'] %}disabled{% endif %}>
+                        <source src="{{ url_for('meditate_bp.serve_audio', filename=session.file) }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
 
-      {% if not current_user.is_premium and loop.index > 2 %}
-      <div class="premium-lock">
-        <p><i class="fas fa-lock"></i> Premium content — <a href="{{ url_for('premium.premium') }}">Upgrade to unlock</a></p>
-      </div>
-      {% endif %}
+                {% if not is_premium and session.id in ['gratitude', 'relaxation', 'stress_relief', 'sleep', 'anxiety_relief', 'morning_energy'] %}
+                <div class="premium-lock">
+                    <p><i class="fas fa-lock"></i> Premium Content</p>
+                    <a href="{{ url_for('premium_bp.premium') }}" class="btn small-btn outline-btn">
+                        <i class="fas fa-unlock"></i> Upgrade to Unlock
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
-  </div>
 
-  <!-- Timer -->
-  <div class="card timer-section">
-    <h3><i class="fas fa-stopwatch"></i> Custom Timer</h3>
-    <p id="timer">2:00</p>
-    <button id="timerBtn" class="btn"><i class="fas fa-play"></i> Start 2-Minute Timer</button>
-  </div>
+    <!-- Timer Section -->
+    <div class="card timer-section">
+        <h2><i class="fas fa-stopwatch"></i> Mindful Timer</h2>
+        <p>Focus on your breath without guidance. Set a timer for your practice.</p>
+        
+        <div class="timer-display">
+            <span id="timer">2:00</span>
+        </div>
+
+        <div class="timer-controls">
+            <button id="timerBtn" class="btn primary-btn">
+                <i class="fas fa-play"></i> Start 2-Minute Timer
+            </button>
+            <button id="resetBtn" class="btn secondary-btn" style="display: none;">
+                <i class="fas fa-redo"></i> Reset
+            </button>
+        </div>
+    </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Enhanced meditation page JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Timer functionality
+    const timerBtn = document.getElementById('timerBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const timerDisplay = document.getElementById('timer');
+    let timerInterval;
+
+    if (timerBtn && timerDisplay) {
+        timerBtn.addEventListener('click', startTimer);
+        resetBtn.addEventListener('click', resetTimer);
+    }
+
+    function startTimer() {
+        let timeLeft = 120; // 2 minutes in seconds
+        timerBtn.disabled = true;
+        timerBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        timerBtn.classList.remove('primary-btn');
+        timerBtn.classList.add('secondary-btn');
+        resetBtn.style.display = 'inline-block';
+
+        timerInterval = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.innerHTML = '<span style="color: var(--accent);">🧘 Time\'s up!</span>';
+                timerBtn.disabled = false;
+                timerBtn.innerHTML = '<i class="fas fa-play"></i> Start Again';
+                timerBtn.classList.remove('secondary-btn');
+                timerBtn.classList.add('primary-btn');
+                
+                // Play a gentle sound? (optional)
+                // new Audio('{{ url_for("static", filename="audio/complete-bell.mp3") }}').play();
+            }
+            timeLeft--;
+        }, 1000);
+
+        // Change button to pause functionality
+        timerBtn.onclick = pauseTimer;
+    }
+
+    function pauseTimer() {
+        clearInterval(timerInterval);
+        timerBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+        timerBtn.onclick = startTimer;
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        timerDisplay.textContent = '2:00';
+        timerBtn.disabled = false;
+        timerBtn.innerHTML = '<i class="fas fa-play"></i> Start 2-Minute Timer';
+        timerBtn.classList.remove('secondary-btn');
+        timerBtn.classList.add('primary-btn');
+        timerBtn.onclick = startTimer;
+        resetBtn.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}

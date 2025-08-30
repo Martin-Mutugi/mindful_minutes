@@ -699,3 +699,411 @@ img {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-dark);
 }
+:root {
+  /* ... your existing variables ... */
+  --primary: #4CAF50;
+  --text: #333;
+  --card-bg: #ffffff;
+  /* ADD THIS LINE */
+  --border-color: #ddd; /* Defines a light mode color for chart gridlines, borders, etc. */
+}
+
+.dark-mode {
+  /* ... your existing variables ... */
+  --text: #eee;
+  --card-bg: #1e1e1e;
+  /* ADD THIS LINE */
+  --border-color: #444; /* Defines a dark mode color for chart gridlines */
+}
+/* === Journal Page Specific Styles === */
+.journal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.journal-header .subtitle {
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-top: 0.25rem;
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.entry-card {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--primary);
+  transition: var(--transition);
+}
+.dark-mode .entry-card {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.entry-card:hover {
+  transform: translateX(4px);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+.entry-date {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.sentiment-score {
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+}
+.score-positive { background-color: #E8F5E9; color: #2E7D32; }
+.score-neutral { background-color: #FFF8E1; color: #F57C00; }
+.score-negative { background-color: #FFEBEE; color: #C62828; }
+.dark-mode .score-positive { background-color: #1B5E20; color: #eee; }
+.dark-mode .score-neutral { background-color: #5D4037; color: #eee; }
+.dark-mode .score-negative { background-color: #B71C1C; color: #eee; }
+
+.entry-content {
+  max-height: 3.6em; /* Show roughly 2 lines of text */
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  transition: max-height 0.3s ease;
+}
+.entry-content.expanded {
+  max-height: 500px; /* Arbitrary large number to expand */
+}
+.entry-text {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-line; /* Respects line breaks from the textarea */
+}
+
+.entry-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mood-tag {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.dark-mode .mood-tag {
+  background-color: var(--primary-dark);
+  color: #eee;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+.icon-btn:hover {
+  color: var(--primary);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+/* === Premium Navigation Styles === */
+.nav-premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  color: #333 !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0 0.5rem;
+}
+
+.nav-upgrade-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0 0.5rem;
+  transition: var(--transition);
+}
+
+.nav-upgrade-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
+/* Ensure consistent navbar layout with new elements */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* === Premium Page Styles === */
+.premium-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.premium-header .subtitle {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Premium Status Card */
+.premium-status-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.premium-status-header .status-icon {
+  color: #FFD700; /* Gold color for crown */
+}
+.member-since {
+  color: var(--text-light);
+  margin: 0.5rem 0;
+}
+
+/* Benefits Grid */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--primary-light);
+  border-radius: 8px;
+}
+.benefit-item i {
+  color: var(--primary);
+  font-size: 1.2rem;
+  width: 1.5rem;
+}
+.dark-mode .benefit-item {
+  background: var(--primary-dark);
+}
+
+/* Pricing Card */
+.pricing-card {
+  background: linear-gradient(135deg, var(--card-bg) 0%, rgba(76, 175, 80, 0.1) 100%);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+.pricing-card.highlighted {
+  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(76, 175, 80, 0.2) 100%);
+}
+.pricing-header .price {
+  margin: 1rem 0;
+}
+.pricing-header .amount {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.pricing-header .period {
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+.pricing-features {
+  text-align: left;
+  margin: 1.5rem 0;
+}
+.pricing-features ul {
+  list-style: none;
+  padding: 0;
+}
+.pricing-features li {
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.pricing-features i {
+  color: var(--primary);
+}
+
+/* Comparison Table */
+.feature-comparison {
+  margin: 3rem 0;
+}
+.comparison-table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+.comparison-header, .comparison-row {
+  display: table-row;
+}
+.comparison-header > div, .comparison-row > div {
+  display: table-cell;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.comparison-header {
+  font-weight: 600;
+  background: var(--primary-light);
+}
+.dark-mode .comparison-header {
+  background: var(--primary-dark);
+}
+.feature-column {
+  width: 60%;
+  text-align: left;
+}
+.free-column, .premium-column {
+  width: 20%;
+  text-align: center;
+}
+.premium-column {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* FAQ Section */
+.faq-section {
+  margin-top: 3rem;
+}
+.faq-item {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: var(--primary-light);
+  border-radius: var(--radius);
+}
+.dark-mode .faq-item {
+  background: var(--primary-dark);
+}
+.faq-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary);
+}
+
+/* Payment Disabled State */
+.payment-disabled {
+  padding: 1rem;
+  background: #FFF3CD;
+  color: #856404;
+  border-radius: 6px;
+  margin: 1rem 0;
+  text-align: center;
+}
+.dark-mode .payment-disabled {
+  background: #5D4037;
+  color: #FFE0B2;
+}
+
+/* Testimonial */
+.testimonial {
+  background: var(--primary-light);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin: 1rem 0;
+  font-style: italic;
+  position: relative;
+}
+.testimonial:before {
+  content: '"';
+  font-size: 4rem;
+  color: var(--primary);
+  opacity: 0.2;
+  position: absolute;
+  top: -1rem;
+  left: 0.5rem;
+}
+.testimonial-author {
+  display: block;
+  text-align: right;
+  font-style: normal;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+.dark-mode .testimonial {
+  background: var(--primary-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .premium-status-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+  .comparison-table {
+    display: block;
+  }
+  .comparison-header, .comparison-row {
+    display: block;
+    padding: 1rem 0;
+  }
+  .comparison-header > div, .comparison-row > div {
+    display: block;
+    padding: 0.5rem;
+    text-align: center;
+  }
+  .feature-column {
+    width: 100%;
+    font-weight: 600;
+    background: var(--primary-light);
+    border-radius: 4px 4px 0 0;
+  }
+  .free-column, .premium-column {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem;
+  }
+  .free-column {
+    background: rgba(0,0,0,0.05);
+  }
+  .premium-column {
+    background: var(--primary-light);
+    border-radius: 0 0 4px 4px;
+  }
+  .dark-mode .free-column {
+    background: rgba(255,255,255,0.05);
+  }
+}

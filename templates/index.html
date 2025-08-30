@@ -1,26 +1,454 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="index-grid">
-  <div class="card welcome-card">
-    <h1>Welcome to <span class="brand-highlight">Mindful Minutes</span></h1>
-    <p>Your AI-powered micro-meditation companion for emotional wellness</p>
-    <div class="action-buttons">
-      <a href="{{ url_for('auth.login') }}" class="btn"><i class="fas fa-sign-in-alt"></i> Login</a>
-      <a href="{{ url_for('auth.register') }}" class="btn highlight"><i class="fas fa-user-plus"></i> Register</a>
-    </div>
-  </div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Find Your Moment of <span class="text-gradient">Peace</span></h1>
+            <p class="hero-subtitle">AI-powered micro-meditations tailored to your emotional needs. 
+            Because your mental well-being deserves a moment of attention.</p>
+            
+            <div class="hero-actions">
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth_bp.register') }}" class="btn primary-btn large-btn">
+                    <i class="fas fa-rocket"></i> Start Your Journey - It's Free
+                </a>
+                <a href="{{ url_for('auth_bp.login') }}" class="btn secondary-btn">
+                    <i class="fas fa-sign-in-alt"></i> Returning User
+                </a>
+                {% else %}
+                <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn primary-btn large-btn">
+                    <i class="fas fa-brain"></i> Continue to Your Dashboard
+                </a>
+                {% endif %}
+            </div>
 
-  <div class="card info-card">
-    <h2><i class="fas fa-info-circle"></i> What is Mindful Minutes?</h2>
-    <p>Mindful Minutes helps you reflect, recharge, and realign through short journal entries and personalized meditation breaks. It’s built for busy lives and emotional clarity.</p>
-    <p><strong>Core features:</strong></p>
-    <ul class="feature-list">
-      <li><i class="fas fa-brain"></i> Emotional journaling with AI sentiment analysis</li>
-      <li><i class="fas fa-headphones"></i> Personalized 2-minute meditation recommendations</li>
-      <li><i class="fas fa-chart-line"></i> Mood tracking with interactive visual charts</li>
-      <li><i class="fas fa-star"></i> Premium upgrades for deeper relaxation and insights</li>
-    </ul>
-  </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">2,500+</span>
+                    <span class="stat-label">Moments of Clarity</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">User Satisfaction</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">AI-Powered Support</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <div class="mockup-container">
+                <div class="mockup-card">
+                    <div class="mockup-header">
+                        <span class="mockup-dot" style="background: #ff4757;"></span>
+                        <span class="mockup-dot" style="background: #feca57;"></span>
+                        <span class="mockup-dot" style="background: #1dd1a1;"></span>
+                    </div>
+                    <div class="mockup-content">
+                        <p class="mockup-text">"Today I felt anxious about work deadlines..."</p>
+                        <div class="mockup-analysis">
+                            <span class="mockup-tag" style="background: #ff6b6b; color: white;">Anxious</span>
+                            <span class="mockup-score">Score: 0.32</span>
+                        </div>
+                        <div class="mockup-recommendation">
+                            <i class="fas fa-headphones"></i>
+                            Recommended: Anxiety Relief Meditation
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2>Why Choose <span class="brand-highlight">Mindful Minutes</span>?</h2>
+        <p class="section-subtitle">Designed for real people with real emotions</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI-Powered Insights</h3>
+                <p>Advanced sentiment analysis understands your emotional state and provides personalized feedback.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <h3>Personalized Meditations</h3>
+                <p>2-minute sessions specifically chosen for your current mood and needs. No one-size-fits-all approach.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Track Your Journey</h3>
+                <p>Beautiful visualizations help you understand your emotional patterns and growth over time.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Private & Secure</h3>
+                <p>Your journal entries are yours alone. We use encryption and never share your personal data.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Always Accessible</h3>
+                <p>Responsive design works perfectly on your phone, tablet, or computer whenever you need it.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sd-card"></i>
+                </div>
+                <h3>SDG Aligned</h3>
+                <p>Contributing to UN Sustainable Development Goal #3: Good Health and Well-being for all.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section">
+    <div class="container">
+        <h2>How It Works</h2>
+        <p class="section-subtitle">Three simple steps to emotional clarity</p>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Write & Reflect</h3>
+                <p>Share your thoughts in a quick journal entry. No pressure, just honesty.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>AI Analysis</h3>
+                <p>Our technology understands your emotional state and identifies patterns.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Receive Guidance</h3>
+                <p>Get personalized meditation recommendations tailored to your needs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2>Hear From Our Community</h2>
+        <p class="section-subtitle">Real people, real results</p>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Mindful Minutes helped me manage my anxiety during exam season. The 2-minute meditations fit perfectly into my busy schedule."</p>
+                </div>
+                <div class="testimonial-author">
+                    <strong>Sarah K.</strong>
+                    <span>University Student</span>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"As a remote worker, this app has been my daily mental health check-in. The mood tracking shows me patterns I never noticed."</p>
+                </div>
+                <div class="testimonial-author">
+                    <strong>Michael T.</strong>
+                    <span>Software Developer</span>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"I was skeptical about AI understanding emotions, but the recommendations are surprisingly accurate. Better than my previous therapist!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <strong>Priya L.</strong>
+                    <span>Marketing Manager</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to Transform Your Emotional Well-being?</h2>
+        <p class="cta-subtitle">Join thousands of users who have found clarity and peace through mindful moments</p>
+        
+        <div class="cta-actions">
+            <a href="{{ url_for('auth_bp.register') }}" class="btn primary-btn extra-large-btn">
+                <i class="fas fa-gem"></i> Start Your Free Journey
+            </a>
+            <p class="cta-note">No credit card required • 2-minute setup • Cancel anytime</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Hero Section Styles */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--card-bg) 100%);
+    padding: 4rem 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    color: var(--text-light);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-actions {
+    margin-bottom: 3rem;
+}
+
+.hero-actions .btn {
+    margin: 0 0.5rem 1rem;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* Features Section */
+.features-section {
+    padding: 5rem 0;
+    background: var(--bg);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--radius);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+}
+
+/* How It Works */
+.how-it-works-section {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--card-bg) 0%, var(--primary-light) 100%);
+}
+
+.steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.step {
+    text-align: center;
+    padding: 2rem;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 1.5rem;
+}
+
+/* Testimonials */
+.testimonials-section {
+    padding: 5rem 0;
+    background: var(--bg);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.testimonial-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--radius);
+    position: relative;
+}
+
+.testimonial-card:before {
+    content: '"';
+    font-size: 4rem;
+    color: var(--primary);
+    opacity: 0.1;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.testimonial-content {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-author {
+    text-align: right;
+}
+
+.testimonial-author strong {
+    display: block;
+    color: var(--primary);
+}
+
+.testimonial-author span {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    text-align: center;
+}
+
+.cta-section h2 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.cta-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+}
+
+.extra-large-btn {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+}
+
+.cta-note {
+    margin-top: 1rem;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-stats {
+        gap: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .features-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .steps-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 {% endblock %}

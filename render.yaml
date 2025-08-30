@@ -1,10 +1,29 @@
 services:
   - type: web
-    name: mindful_minutes
+    name: mindful-minutes-web
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
-    plan: free
     region: oregon
+    plan: free
+    
+    # Updated build command
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    
+    # Enhanced start command
+    startCommand: gunicorn --workers=2 --threads=4 --timeout=120 --access-logfile=- --bind=0.0.0.0:$PORT app:app
+    
+    # Environment variables
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mindful-minutes-db
+          property: connectionString
+    
+    healthCheckPath: /healthz
     branch: main
     autoDeploy: true

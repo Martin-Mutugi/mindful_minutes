@@ -1,73 +1,150 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="premium-header">
+    <h1><i class="fas fa-crown"></i> Unlock Your Full Potential</h1>
+    <p class="subtitle">Elevate your mindfulness journey with Premium features designed for deeper transformation.</p>
+</div>
+
 <section class="premium-grid">
-  <div class="card">
-    <h2><i class="fas fa-star"></i> Premium Membership</h2>
-
+    <!-- For Premium Members: Thank You & Benefits -->
     {% if current_user.is_premium %}
-    <div class="premium-status">
-      <h3><i class="fas fa-crown"></i> You're a Premium Member!</h3>
-      <p>
-        Thank you for supporting <strong>Mindful Minutes</strong>.<br>
-        {% if current_user.premium_since %}
-          Subscription started on <strong>{{ current_user.premium_since.strftime('%Y-%m-%d') }}</strong>.
-        {% else %}
-          Your subscription is active 🎉
-        {% endif %}
-      </p>
+    <div class="card premium-status-card">
+        <div class="premium-status-header">
+            <div class status-icon>
+                <i class="fas fa-crown fa-3x"></i>
+            </div>
+            <div>
+                <h2>You're a Premium Member!</h2>
+                <p class="member-since">
+                    Thank you for investing in your well-being. 
+                    {% if current_user.premium_since %}
+                    You've been enjoying Premium since <strong>{{ current_user.premium_since.strftime('%B %d, %Y') }}</strong>.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
 
-      <h4>Your Premium Benefits:</h4>
-      <ul class="benefits-list">
-        {% for feature in premium_features %}
-          <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
-        {% endfor %}
-      </ul>
+        <div class="premium-benefits">
+            <h3><i class="fas fa-star"></i> Your Exclusive Benefits</h3>
+            <div class="benefits-grid">
+                {% for feature in premium_features %}
+                <div class="benefit-item">
+                    <i class="{{ feature.icon }}"></i>
+                    <span>{{ feature.text }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 
-      <a href="{{ url_for('meditate.meditate') }}" class="btn premium-access-btn">
-        <i class="fas fa-headphones"></i> Start Premium Meditation
-      </a>
+        <div class="premium-cta">
+            <a href="{{ url_for('meditate_bp.meditate') }}" class="btn premium-btn">
+                <i class="fas fa-headphones"></i> Explore Premium Meditations
+            </a>
+            <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn secondary-btn">
+                <i class="fas fa-chart-line"></i> View Your Insights
+            </a>
+        </div>
     </div>
 
+    <!-- For Free Members: Sales Page -->
     {% else %}
-    <div class="premium-offer">
-      <h3><i class="fas fa-gem"></i> Upgrade to Premium</h3>
-      <p>Compare what’s included in Free vs Premium:</p>
-
-      <div class="feature-comparison">
-        <div class="free-features">
-          <h4>Free Plan</h4>
-          <ul>
-            {% for feature in free_features %}
-              <li><i class="fas fa-minus-circle"></i> {{ feature }}</li>
-            {% endfor %}
-            <li><i class="fas fa-headphones"></i> Basic Meditations (Gratitude, Breathing, Focus)</li>
-          </ul>
+    <div class="card premium-offer-card">
+        <!-- Social Proof Header -->
+        <div class="social-proof">
+            <div class="testimonial">
+                <p>"The premium meditations changed my daily routine. Worth every penny!"</p>
+                <span class="testimonial-author">– Sarah M., Premium Member</span>
+            </div>
         </div>
 
-        <div class="premium-features">
-          <h4>Premium Plan</h4>
-          <ul>
-            {% for feature in premium_features %}
-              <li><i class="fas fa-star"></i> {{ feature }}</li>
-            {% endfor %}
-            <li><i class="fas fa-music"></i> Exclusive Meditations (Deep Sleep, Stress Relief, Morning Energy)</li>
-          </ul>
-        </div>
-      </div>
+        <!-- Pricing Card -->
+        <div class="pricing-card highlighted">
+            <div class="pricing-header">
+                <h3><i class="fas fa-gem"></i> Mindful Minutes Premium</h3>
+                <div class="price">
+                    <span class="amount">$5</span>
+                    <span class="period">/month</span>
+                </div>
+                <p>Billed monthly. Cancel anytime.</p>
+            </div>
 
-      <div class="pricing">
-        <h4><i class="fas fa-dollar-sign"></i> Only $5/month</h4>
-        <form method="POST" action="{{ url_for('premium.initiate_payment') }}">
-          <input type="hidden" name="amount" value="5.00">
-          <button type="submit" class="btn premium-btn">
-            <i class="fas fa-rocket"></i> Upgrade to Premium
-          </button>
-        </form>
-        <p class="small-text"><i class="fas fa-shield-alt"></i> Secure payment powered by IntaSend. Cancel anytime.</p>
-      </div>
+            <div class="pricing-features">
+                <ul>
+                    {% for feature in premium_features %}
+                    <li><i class="fas fa-check"></i> {{ feature.text }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if payment_configured %}
+            <form method="POST" action="{{ url_for('premium_bp.initiate_payment') }}">
+                <input type="hidden" name="amount" value="5.00">
+                <button type="submit" class="btn premium-btn large-btn">
+                    <i class="fas fa-rocket"></i> Upgrade Now
+                </button>
+            </form>
+            {% else %}
+            <div class="payment-disabled">
+                <p><i class="fas fa-tools"></i> Payment processing is temporarily unavailable.</p>
+                <p class="small-text">Please check back later or contact support.</p>
+            </div>
+            {% endif %}
+
+            <p class="security-note">
+                <i class="fas fa-shield-alt"></i> Secure payment powered by IntaSend
+            </p>
+        </div>
+
+        <!-- Feature Comparison -->
+        <div class="feature-comparison">
+            <h3><i class="fas fa-scale-balanced"></i> Plan Comparison</h3>
+            <div class="comparison-table">
+                <div class="comparison-header">
+                    <div class="feature-column">Feature</div>
+                    <div class="free-column">Free</div>
+                    <div class="premium-column">Premium</div>
+                </div>
+                {% for feature in free_features %}
+                <div class="comparison-row">
+                    <div class="feature-column">{{ feature.text }}</div>
+                    <div class="free-column"><i class="fas fa-check"></i></div>
+                    <div class="premium-column"><i class="fas fa-check"></i></div>
+                </div>
+                {% endfor %}
+                {% for feature in premium_features %}
+                <div class="comparison-row">
+                    <div class="feature-column">{{ feature.text }}</div>
+                    <div class="free-column"><i class="fas fa-times"></i></div>
+                    <div class="premium-column"><i class="fas fa-check"></i></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h3><i class="fas fa-question-circle"></i> Frequently Asked Questions</h3>
+            <div class="faq-item">
+                <h4>How does billing work?</h4>
+                <p>Your subscription is billed monthly at $5. You can cancel anytime from your account settings.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Can I try before I buy?</h4>
+                <p>We offer a 7-day free trial for new Premium members. Experience all features risk-free.</p>
+            </div>
+            <div class="faq-item">
+                <h4>What payment methods do you accept?</h4>
+                <p>We accept M-Pesa, credit/debit cards, and other local payment methods through our secure partner, IntaSend.</p>
+            </div>
+        </div>
     </div>
     {% endif %}
-  </div>
 </section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Additional premium page specific styles */
+</style>
 {% endblock %}

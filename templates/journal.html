@@ -1,39 +1,113 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="journal-grid">
-  <!-- Journal Form -->
-  <div class="card">
-    <h2><i class="fas fa-pen"></i> Journal</h2>
-    <form method="POST" class="journal-form">
-      <div class="form-group">
-        <label for="content"><i class="fas fa-comment-dots"></i> How are you feeling today?</label>
-        <textarea id="content" name="content" rows="5" required placeholder="Write your thoughts here..."></textarea>
-      </div>
-      <button type="submit" class="btn"><i class="fas fa-brain"></i> Analyze Mood</button>
-    </form>
-  </div>
+<div class="journal-header">
+    <h1><i class="fas fa-pen-nib"></i> Reflect & Analyze</h1>
+    <p class="subtitle">Express your thoughts and uncover insights into your emotional well-being.</p>
+</div>
 
-  <!-- Previous Entries -->
-  <div class="card">
-    <h3><i class="fas fa-history"></i> Previous Entries</h3>
-    {% if entries %}
-      <div class="entries-list">
-        {% for entry in entries %}
-          <div class="entry-card">
-            <p class="entry-date"><i class="fas fa-calendar-day"></i> {{ entry.created_at.strftime('%Y-%m-%d') }}</p>
-            <p class="entry-text">{{ entry.content }}</p>
-            <p class="entry-mood">
-              <i class="fas fa-smile"></i> Mood: 
-              <span class="mood-tag">{{ entry.emotion }}</span> 
-              <span class="score">({{ "%.2f"|format(entry.sentiment_score) }})</span>
-            </p>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p>No entries yet. Start journaling to track your emotional journey.</p>
-    {% endif %}
-  </div>
+<section class="journal-grid">
+    <!-- Journal Form Card -->
+    <div class="card">
+        <h2><i class="fas fa-edit"></i> New Journal Entry</h2>
+        <form method="POST" class="journal-form" id="journalForm">
+            {{ form.hidden_tag() }}  <!-- CSRF Token - Important for security -->
+            <div class="form-group">
+                <label for="content"><i class="fas fa-comment-dots"></i> How are you feeling today?</label>
+                <textarea 
+                    id="content" 
+                    name="content" 
+                    rows="5" 
+                    required 
+                    placeholder="Be open and honest. Write about your day, your stresses, or your joys..."
+                    oninput="updateCharCount(this)"
+                ></textarea>
+                <div class="char-count" id="charCount">0 characters</div>
+            </div>
+            <button type="submit" class="btn primary-btn" id="submitBtn">
+                <i class="fas fa-brain"></i> Analyze My Mood
+            </button>
+        </form>
+    </div>
+
+    <!-- Previous Entries & Insights Card -->
+    <div class="card">
+        <div class="card-header-flex">
+            <h3><i class="fas fa-history"></i> Your Journal History</h3>
+            <span class="badge">{{ entries|length }} entries</span>
+        </div>
+
+        {% if entries %}
+            <div class="entries-list">
+                {% for entry in entries %}
+                    <div class="entry-card" data-emotion="{{ entry.emotion|lower }}">
+                        <div class="entry-header">
+                            <p class="entry-date">
+                                <i class="fas fa-calendar-day"></i> 
+                                {{ entry.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                            </p>
+                            <span class="sentiment-score {{ 'score-positive' if entry.sentiment_score > 0.6 else 'score-neutral' if entry.sentiment_score > 0.4 else 'score-negative' }}">
+                                {{ "%.0f"|format(entry.sentiment_score * 100) }}%
+                            </span>
+                        </div>
+                        <div class="entry-content">
+                            <p class="entry-text">{{ entry.content }}</p>
+                        </div>
+                        <div class="entry-footer">
+                            <span class="mood-tag mood-{{ entry.emotion|lower|replace(' ', '-') }}">
+                                <i class="fas fa-smile"></i> {{ entry.emotion }}
+                            </span>
+                            <button class="icon-btn" onclick="toggleEntryExpand(this)" title="Expand entry">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State: More encouraging and visually appealing -->
+            <div class="empty-state">
+                <i class="fas fa-book-open fa-3x"></i>
+                <h4>Your journey starts here</h4>
+                <p>Your journal entries will appear here. Write your first entry to begin tracking your mood.</p>
+            </div>
+        {% endif %}
+    </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Script for this specific page -->
+<script>
+    // Character counter for the textarea
+    function updateCharCount(textarea) {
+        const count = textarea.value.length;
+        document.getElementById('charCount').textContent = count + ' characters';
+        // Optional: Change color or show warning near limit
+        // if (count > 500) { ... }
+    }
+
+    // Toggle to expand/collapse long journal entries
+    function toggleEntryExpand(button) {
+        const entryCard = button.closest('.entry-card');
+        const content = entryCard.querySelector('.entry-content');
+        const icon = button.querySelector('i');
+
+        content.classList.toggle('expanded');
+        if (content.classList.contains('expanded')) {
+            icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            button.title = "Collapse entry";
+        } else {
+            icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            button.title = "Expand entry";
+        }
+    }
+
+    // Form submission feedback
+    document.getElementById('journalForm')?.addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+        submitBtn.disabled = true;
+    });
+</script>
 {% endblock %}
