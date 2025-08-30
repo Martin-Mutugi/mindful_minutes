@@ -12,6 +12,13 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # Optional: Add security headers for production
+    try:
+        from flask_talisman import Talisman
+        Talisman(app)
+    except ImportError:
+        pass  # Talisman not installed, skip
+
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
@@ -39,11 +46,14 @@ def create_app():
             return redirect(url_for('dashboard.dashboard'))
         return render_template('index.html')
 
+    @app.route('/healthz')
+    def healthz():
+        return {'status': 'ok'}, 200
+
     with app.app_context():
         db.create_all()
 
     return app
-
 
 if __name__ == '__main__':
     app = create_app()

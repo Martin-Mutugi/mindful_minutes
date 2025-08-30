@@ -46,6 +46,3 @@ Pygments==2.19.2
 
 # Optional: security headers for production
 Flask-Talisman==1.0.0
-
-# Optional: health check endpoint
-flask-healthz==0.1.0
