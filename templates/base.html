@@ -15,7 +15,7 @@
 <body>
   <header>
     <nav class="navbar">
-      <div class="nav-grid">
+      <div class="container navbar-content">
         <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
           <i class="fas fa-brain"></i> Mindful Minutes
         </a>
@@ -30,12 +30,14 @@
             <a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Register</a>
           {% endif %}
         </div>
-        <button id="darkToggle" class="btn small-btn"><i class="fas fa-moon"></i></button>
+        <button id="darkToggle" class="btn small-btn" title="Toggle dark mode">
+          <i class="fas fa-moon"></i>
+        </button>
       </div>
     </nav>
   </header>
 
-  <main class="main-grid">
+  <main class="container main-grid">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -56,6 +58,7 @@
     <p>&copy; {{ current_year or 2025 }} Mindful Minutes. Built with care in Nairobi.</p>
   </footer>
 
+  <!-- Scripts -->
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

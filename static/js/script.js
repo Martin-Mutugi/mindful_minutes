@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   // 🌙 Dark Mode Toggle
   const darkToggle = document.getElementById('darkToggle');
   if (darkToggle) {
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ⏳ Journal Form Loading Spinner
+  // ⏳ Journal Form Spinner
   const journalForm = document.querySelector('.journal-form');
   const loadingSpinner = document.getElementById('loadingSpinner');
   if (journalForm && loadingSpinner) {
@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // 📊 Mood Chart
-  const ctx = document.getElementById('moodChart');
-  if (ctx) {
-    const dates = JSON.parse(ctx.getAttribute('data-dates'));
-    const scores = JSON.parse(ctx.getAttribute('data-scores'));
+  const chartEl = document.getElementById('moodChart');
+  if (chartEl) {
+    const dates = JSON.parse(chartEl.getAttribute('data-dates'));
+    const scores = JSON.parse(chartEl.getAttribute('data-scores'));
 
-    new Chart(ctx, {
+    new Chart(chartEl, {
       type: 'line',
       data: {
         labels: dates,
@@ -41,20 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
         responsive: true,
         plugins: {
           legend: {
-            display: true,
             labels: {
               color: '#333',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
+              font: { size: 14, weight: 'bold' }
             }
           },
           tooltip: {
             callbacks: {
-              label: function (context) {
-                return `Score: ${context.parsed.y.toFixed(2)}`;
-              }
+              label: ctx => `Score: ${ctx.parsed.y.toFixed(2)}`
             }
           }
         },
@@ -62,16 +56,12 @@ document.addEventListener('DOMContentLoaded', function () {
           y: {
             beginAtZero: true,
             max: 1,
-            ticks: {
-              stepSize: 0.1
-            },
+            ticks: { stepSize: 0.1 },
             title: {
               display: true,
               text: 'Mood Score',
               color: '#333',
-              font: {
-                size: 14
-              }
+              font: { size: 14 }
             }
           },
           x: {
@@ -79,9 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
               display: true,
               text: 'Date',
               color: '#333',
-              font: {
-                size: 14
-              }
+              font: { size: 14 }
             }
           }
         }
@@ -94,18 +82,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const timerDisplay = document.getElementById('timer');
 
   if (timerBtn && timerDisplay) {
-    timerBtn.addEventListener('click', function () {
+    timerBtn.addEventListener('click', () => {
       let timeLeft = 120;
       timerBtn.disabled = true;
       timerBtn.textContent = "Meditation in progress...";
 
-      const timerInterval = setInterval(() => {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      const interval = setInterval(() => {
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        timerDisplay.textContent = `${min}:${sec < 10 ? '0' : ''}${sec}`;
 
         if (timeLeft <= 0) {
-          clearInterval(timerInterval);
+          clearInterval(interval);
           timerDisplay.textContent = "🧘 Time's up!";
           timerBtn.disabled = false;
           timerBtn.textContent = "Start 2-Minute Timer";
