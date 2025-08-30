@@ -6,6 +6,7 @@ from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_mail import Mail
+from models import User  # ← ADD THIS IMPORT
 
 # Database ORM
 db = SQLAlchemy()
@@ -15,10 +16,23 @@ migrate = Migrate()
 
 # Login management
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'  # Changed to 'auth.login' to match your blueprint
+login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 login_manager.session_protection = 'strong'
+
+# User loader function - REQUIRED for Flask-Login
+@login_manager.user_loader  # ← ADD THIS FUNCTION
+def load_user(user_id):
+    """Load user from database by ID."""
+    try:
+        return db.session.get(User, int(user_id))
+    except (ValueError, TypeError):
+        return None
+    except Exception as e:
+        from flask import current_app
+        current_app.logger.error(f"Error loading user {user_id}: {e}")
+        return None
 
 # CSRF protection (for form security)
 csrf = CSRFProtect()
@@ -32,7 +46,7 @@ cache = Cache(config={
 # Rate limiting (to prevent abuse)
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"],  # These will apply to all routes
+    default_limits=["200 per day", "50 per hour"],
     storage_uri="memory://"
 )
 
@@ -64,5 +78,3 @@ def init_extensions(app):
                 raise
     
     app.logger.info("All extensions initialized successfully")
-
-# REMOVED the problematic configure_rate_limiting function entirely
