@@ -17,7 +17,7 @@ def create_app():
         from flask_talisman import Talisman
         Talisman(app)
     except ImportError:
-        pass  # Talisman not installed, skip
+        pass  # Skip if not installed
 
     db.init_app(app)
     login_manager.init_app(app)

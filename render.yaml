@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: mindful_minutes
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --factory app:create_app
+    plan: free
+    region: oregon
+    branch: main
+    autoDeploy: true
