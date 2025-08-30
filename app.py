@@ -17,7 +17,7 @@ def create_app():
         from flask_talisman import Talisman
         Talisman(app)
     except ImportError:
-        pass  # Skip if not installed
+        pass
 
     db.init_app(app)
     login_manager.init_app(app)
@@ -55,6 +55,8 @@ def create_app():
 
     return app
 
+# Expose app instance for Gunicorn
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)))

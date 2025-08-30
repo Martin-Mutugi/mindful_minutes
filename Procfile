@@ -1,1 +1,1 @@
-web: gunicorn --factory app:create_app
+web: gunicorn app:app
