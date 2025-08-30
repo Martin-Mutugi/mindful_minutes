@@ -11,14 +11,14 @@
             
             <div class="hero-actions">
                 {% if not current_user.is_authenticated %}
-                <a href="{{ url_for('auth_bp.register') }}" class="btn primary-btn large-btn">
+                <a href="{{ url_for('auth.register') }}" class="btn primary-btn large-btn">  <!-- FIXED: auth.register -->
                     <i class="fas fa-rocket"></i> Start Your Journey - It's Free
                 </a>
-                <a href="{{ url_for('auth_bp.login') }}" class="btn secondary-btn">
+                <a href="{{ url_for('auth.login') }}" class="btn secondary-btn">  <!-- FIXED: auth.login -->
                     <i class="fas fa-sign-in-alt"></i> Returning User
                 </a>
                 {% else %}
-                <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn primary-btn large-btn">
+                <a href="{{ url_for('dashboard.dashboard') }}" class="btn primary-btn large-btn">  <!-- FIXED: dashboard.dashboard -->
                     <i class="fas fa-brain"></i> Continue to Your Dashboard
                 </a>
                 {% endif %}
@@ -198,7 +198,7 @@
         <p class="cta-subtitle">Join thousands of users who have found clarity and peace through mindful moments</p>
         
         <div class="cta-actions">
-            <a href="{{ url_for('auth_bp.register') }}" class="btn primary-btn extra-large-btn">
+            <a href="{{ url_for('auth.register') }}" class="btn primary-btn extra-large-btn">  <!-- FIXED: auth.register -->
                 <i class="fas fa-gem"></i> Start Your Free Journey
             </a>
             <p class="cta-note">No credit card required • 2-minute setup • Cancel anytime</p>
